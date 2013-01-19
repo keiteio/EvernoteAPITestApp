@@ -50,7 +50,7 @@ public class Sample {
 	    TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
 	    noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
 	    
-	    // �e�X�g���{
+	    // main logic
 	    TestMethod(developerToken, args[0], 0, 3);
 	    
 		} catch (Exception e) {
