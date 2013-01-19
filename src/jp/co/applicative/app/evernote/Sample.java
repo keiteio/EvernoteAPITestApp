@@ -50,7 +50,7 @@ public class Sample {
 	    TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
 	    noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
 	    
-	    // ƒeƒXƒgÀ{
+	    // ï¿½eï¿½Xï¿½gï¿½ï¿½ï¿½{
 	    TestMethod(developerToken, args[0], 0, 3);
 	    
 		} catch (Exception e) {
@@ -63,11 +63,11 @@ public class Sample {
 	static void TestMethod(String developerToken, String imageFilepath, int count, int tryMax) throws Exception{
 		 NoteList notes = findNotes(developerToken, "intitle:ImgRecogTest");
 		    if(notes.getNotes().isEmpty()){
-		    	// ƒm[ƒg‚ğ“Še‚µ‚ÄÄÀs
+		    	// create a new note if it`s not found. 
 		    	Note note = new Note();
 		    	note.setTitle("ImgRecogTest");
 		    	
-		    	// ƒŠƒ\[ƒX‚Ì’Ç‰Á
+		    	// Add an image resource.
 		    	Resource resource = new Resource();
 		    	resource.setData(readFileAsData(imageFilepath));
 		    	resource.setMime("image/jpg");
@@ -76,9 +76,7 @@ public class Sample {
 		        resource.setAttributes(attributes);
 		        note.addToResources(resource);
 		    	
-		        // ‰æ‘œƒf[ƒ^‚ğ6i”‚ÌƒnƒbƒVƒ…‚Æ‚µ‚Äæ“¾
 		        String hashHex = bytesToHex(resource.getData().getBodyHash());
-		        
 		    	String content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		    	        + "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
 		    	        + "<en-note>" 
@@ -87,13 +85,13 @@ public class Sample {
 		    	        + "</en-note>";
 		    	note.setContent(content);
 		    	
-		    	// ƒm[ƒg‚ğ“Še
+		    	// Upload the noat.
 			    noteStore.createNote(developerToken, note);
 			    
-			    // ‚R•b‘Ò‚Â
+			    // wait three sec.
 			    Thread.sleep(3000);
 			    
-			    // ”‰ñƒ`ƒƒƒŒƒ“ƒW
+			    // Try few times.
 		    	if(count < tryMax){
 		    		TestMethod(developerToken,imageFilepath, count + 1, tryMax);
 		    	}
