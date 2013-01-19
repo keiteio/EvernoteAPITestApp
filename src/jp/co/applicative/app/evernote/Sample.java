@@ -1,7 +1,9 @@
 package jp.co.applicative.app.evernote;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Reader;
 import java.security.MessageDigest;
 import java.sql.SQLException;
@@ -10,6 +12,14 @@ import java.util.Iterator;
 import javax.sql.RowSetInternal;
 import javax.sql.rowset.WebRowSet;
 import javax.sql.rowset.spi.XmlReader;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+
+import org.xml.sax.SAXException;
 
 import com.evernote.edam.error.EDAMNotFoundException;
 import com.evernote.edam.error.EDAMSystemException;
@@ -107,16 +117,25 @@ public class Sample {
 		    		for(Iterator<Resource> res_itr = n.getResourcesIterator();res_itr.hasNext();){
 		    			Resource r = res_itr.next();
 		    			
-		    			while(r.isSetRecognition()){
-		    				Thread.sleep(3000);
+		    			// Infinite loop...
+		    			//while(r.isSetRecognition()){
+		    			//	Thread.sleep(3000);
+		    			//}
+		    			
+		    			int tryCount = 3;
+		    			for(int i = 0; i < tryCount; i++){
+		    				try{
+				    			byte[] imgRecogData = noteStore.getResourceRecognition(developerToken, r.getGuid());
+				    			
+				    			String xml = new String(imgRecogData,"utf-8");
+				    			xml = xml.replaceAll("><", ">\n<");
+				    			System.out.println(xml);
+				    			return;
+		    				}catch(Exception e){
+		    					if(i == tryCount - 1){ throw e; }
+		    					Thread.sleep(3000);
+		    				}
 		    			}
-		    			
-		    			byte[] imgRecogData = noteStore.getResourceRecognition(developerToken, r.getGuid());
-		    			//Resource res = noteStore.getResource(developerToken, r.getGuid(), false, true, false, false);
-		    			//byte[] imgRecogData = res.getRecognition().getBody();
-		    			
-		    			String xml = new String(imgRecogData,"utf-8");
-		    			System.out.println(xml);
 		    		}
 		    	}
 		    }
