@@ -2,8 +2,14 @@ package jp.co.applicative.app.evernote;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.Reader;
 import java.security.MessageDigest;
+import java.sql.SQLException;
 import java.util.Iterator;
+
+import javax.sql.RowSetInternal;
+import javax.sql.rowset.WebRowSet;
+import javax.sql.rowset.spi.XmlReader;
 
 import com.evernote.edam.error.EDAMNotFoundException;
 import com.evernote.edam.error.EDAMSystemException;
@@ -70,7 +76,7 @@ public class Sample {
 		    	// Add an image resource.
 		    	Resource resource = new Resource();
 		    	resource.setData(readFileAsData(imageFilepath));
-		    	resource.setMime("image/jpg");
+		    	resource.setMime("image/jpeg");
 		    	ResourceAttributes attributes = new ResourceAttributes();
 		        attributes.setFileName(imageFilepath);
 		        resource.setAttributes(attributes);
@@ -101,14 +107,16 @@ public class Sample {
 		    		for(Iterator<Resource> res_itr = n.getResourcesIterator();res_itr.hasNext();){
 		    			Resource r = res_itr.next();
 		    			
+		    			while(r.isSetRecognition()){
+		    				Thread.sleep(3000);
+		    			}
+		    			
 		    			byte[] imgRecogData = noteStore.getResourceRecognition(developerToken, r.getGuid());
 		    			//Resource res = noteStore.getResource(developerToken, r.getGuid(), false, true, false, false);
 		    			//byte[] imgRecogData = res.getRecognition().getBody();
-		    			for(int i = 0;i<imgRecogData.length;i++){
-		    				System.out.print(imgRecogData[i]);
-		    				System.out.print("  ");
-		    			}
-		    			System.out.println("");
+		    			
+		    			String xml = new String(imgRecogData,"utf-8");
+		    			System.out.println(xml);
 		    		}
 		    	}
 		    }
